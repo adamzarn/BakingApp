@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -35,6 +36,11 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
+        toolbar.setTitle("Recipes");
+        AppCompatActivity appCompatActivity = (AppCompatActivity) this;
+        appCompatActivity.setSupportActionBar(toolbar);
 
         portraitLayoutManager = new LinearLayoutManager(this);
         landLayoutManager = new GridLayoutManager(this,3);

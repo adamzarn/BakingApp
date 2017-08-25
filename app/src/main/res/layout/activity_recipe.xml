@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ingredients_and_steps_scroll_view"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent" >
+    android:orientation="vertical"
+    android:id="@+id/step_detail_linear_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ingredients_and_steps_toolbar"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+    </android.support.v7.widget.Toolbar>
 
     <FrameLayout
-            android:id="@+id/ingredients_and_steps_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-    </FrameLayout>
+        android:id="@+id/ingredients_and_steps_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-</ScrollView>
+</LinearLayout>
+
+

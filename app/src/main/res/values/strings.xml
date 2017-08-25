@@ -4,5 +4,6 @@
     <string name="ingredients_header">Ingredients</string>
     <string name="steps_header">Steps</string>
     <string name="next_step_button_text">Next Step</string>
+    <string name="previous_step_button_text">Previous Step</string>
 
 </resources>
