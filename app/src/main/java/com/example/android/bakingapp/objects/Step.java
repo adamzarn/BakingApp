@@ -1,4 +1,4 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.objects;
 
 import android.os.Parcel;
 import android.os.Parcelable;

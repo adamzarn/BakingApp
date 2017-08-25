@@ -1,5 +1,9 @@
 package com.example.android.bakingapp;
 
+import com.example.android.bakingapp.objects.Ingredient;
+import com.example.android.bakingapp.objects.Recipe;
+import com.example.android.bakingapp.objects.Step;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

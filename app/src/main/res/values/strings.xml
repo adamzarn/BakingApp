@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Baking App</string>
     <string name="baking_data_url">https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
+    <string name="ingredients_header">Ingredients</string>
+    <string name="steps_header">Steps</string>
+    <string name="next_step_button_text">Next Step</string>
+
 </resources>

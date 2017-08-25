@@ -1,40 +1,36 @@
-package com.example.android.bakingapp;
+package com.example.android.bakingapp.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.objects.Recipe;
+
 /**
  * Created by adamzarn on 8/15/17.
  */
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHolder> {
 
-    private Context context;
     private Recipe[] myRecipes = null;
 
-    public RecyclerAdapter(Context c, AdapterOnClickHandler myClickHandler) {
-        context = c;
-        this.myClickHandler = myClickHandler;
-    }
-
-    void setData(Recipe[] recipes) {
+    public void setData(Recipe[] recipes) {
         myRecipes = recipes;
         notifyDataSetChanged();
     }
 
     @Override
-    public RecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public RecipesAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_layout, viewGroup, false);
         ViewHolder viewHolder = new ViewHolder(v);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(RecyclerAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(RecipesAdapter.ViewHolder viewHolder, int i) {
         viewHolder.recipeTitle.setText(myRecipes[i].getName());
     }
 
@@ -59,18 +55,18 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         public void onClick(View v) {
             int position = getAdapterPosition();
             Recipe selectedRecipe = myRecipes[position];
-            myClickHandler.onClick(selectedRecipe);
+            mClickHandler.onClick(selectedRecipe);
         }
     }
 
-    private final AdapterOnClickHandler myClickHandler;
+    private final RecipesAdapterOnClickHandler mClickHandler;
 
-    public interface AdapterOnClickHandler {
+    public interface RecipesAdapterOnClickHandler {
         void onClick(Recipe selectedRecipe);
     }
 
-    public RecyclerAdapter(AdapterOnClickHandler clickHandler) {
-        myClickHandler = clickHandler;
+    public RecipesAdapter(RecipesAdapterOnClickHandler clickHandler) {
+        mClickHandler = clickHandler;
     }
 
 }

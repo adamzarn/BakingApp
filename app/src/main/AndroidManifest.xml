@@ -12,14 +12,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RecipeDetailActivity"></activity>
+        <activity android:name=".activities.RecipeActivity"
+            android:parentActivityName="com.example.android.bakingapp.activities.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.bakingapp.activities.MainActivity" />
+        </activity>
+        <activity android:name=".activities.DetailActivity"
+            android:parentActivityName="com.example.android.bakingapp.activities.RecipeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.bakingapp.activities.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
