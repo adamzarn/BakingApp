@@ -54,26 +54,27 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         Context context = getApplicationContext();
-        if (DeviceUtils.isTablet(context)) {
-            mTwoPane = true;
-            Bundle stepsBundle = new Bundle();
-            stepsBundle.putInt("Step", currentStep);
-            stepsBundle.putParcelableArrayList("Steps", new ArrayList<>(Arrays.asList(selectedRecipe.getSteps())));
-            StepDetailFragment stepDetailFragment = new StepDetailFragment();
-            stepDetailFragment.setArguments(stepsBundle);
-            fragmentManager.beginTransaction()
-                    .add(R.id.ingredients_and_steps_container, recipeStepsFragment)
-                    .commit();
-            fragmentManager.beginTransaction()
-                    .add(R.id.step_detail_container, stepDetailFragment)
-                    .commit();
-        } else {
-            mTwoPane = false;
-            fragmentManager.beginTransaction()
-                    .add(R.id.ingredients_and_steps_container, recipeStepsFragment)
-                    .commit();
+        if (savedInstanceState == null) {
+            if (DeviceUtils.isTablet(context)) {
+                mTwoPane = true;
+                Bundle stepsBundle = new Bundle();
+                stepsBundle.putInt("Step", currentStep);
+                stepsBundle.putParcelableArrayList("Steps", new ArrayList<>(Arrays.asList(selectedRecipe.getSteps())));
+                StepDetailFragment stepDetailFragment = new StepDetailFragment();
+                stepDetailFragment.setArguments(stepsBundle);
+                fragmentManager.beginTransaction()
+                        .add(R.id.ingredients_and_steps_container, recipeStepsFragment)
+                        .commit();
+                fragmentManager.beginTransaction()
+                        .add(R.id.step_detail_container, stepDetailFragment)
+                        .commit();
+            } else {
+                mTwoPane = false;
+                fragmentManager.beginTransaction()
+                        .add(R.id.ingredients_and_steps_container, recipeStepsFragment)
+                        .commit();
+            }
         }
-
     }
 
     @Override
@@ -157,6 +158,7 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putParcelable("recipe", selectedRecipe);
         outState.putInt("currentStep", currentStep);
     }

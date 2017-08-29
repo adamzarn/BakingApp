@@ -7,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.DeviceUtils;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.objects.Step;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -32,7 +34,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 /**
@@ -47,6 +48,12 @@ public class StepDetailFragment extends Fragment {
     @BindView(R.id.description_text_view)
     TextView descriptionTextView;
 
+    @BindView(R.id.next_step_button)
+    Button nextStepButton;
+
+    @BindView(R.id.previous_step_button)
+    Button previousStepButton;
+
     @OnClick({R.id.next_step_button, R.id.previous_step_button})
     public void onNextStepButtonClick(View v) {
         mCallback.onButtonSelected(v, position, steps);
@@ -56,7 +63,6 @@ public class StepDetailFragment extends Fragment {
     }
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
-    private static final String TAG = "PlayerActivity";
 
     private SimpleExoPlayer player;
     private SimpleExoPlayerView playerView;
@@ -107,6 +113,14 @@ public class StepDetailFragment extends Fragment {
             playbackPosition = 0;
         }
 
+        Context context = getActivity().getApplicationContext();
+        if (DeviceUtils.isLandscape(context) && !DeviceUtils.isTablet(context)) {
+            stepDetailTitle.setVisibility(View.GONE);
+            descriptionTextView.setVisibility(View.GONE);
+            nextStepButton.setVisibility(View.GONE);
+            previousStepButton.setVisibility(View.GONE);
+        }
+
         return rootView;
 
     }
@@ -120,21 +134,23 @@ public class StepDetailFragment extends Fragment {
             player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getActivity()),
                     new DefaultTrackSelector(adaptiveTrackSelectionFactory), new DefaultLoadControl());
 
-            playerView.setPlayer(player);
-            player.setPlayWhenReady(false);
-            player.seekTo(currentWindow, playbackPosition);
-
         }
 
         Uri uri = Uri.parse(videoURL);
         MediaSource mediaSource = buildMediaSource(uri);
         player.prepare(mediaSource, true, false);
+        playerView.setPlayer(player);
+        if (playbackPosition > 0) {
+            player.setPlayWhenReady(true);
+        } else {
+            player.setPlayWhenReady(false);
+        }
+        player.seekTo(currentWindow, playbackPosition);
 
     }
 
     private void releasePlayer() {
         if (player != null) {
-            playbackPosition = player.getCurrentPosition();
             currentWindow = player.getCurrentWindowIndex();
             playWhenReady = player.getPlayWhenReady();
             player.release();
@@ -162,7 +178,7 @@ public class StepDetailFragment extends Fragment {
         super.onStart();
         if (Util.SDK_INT > 23) {
             if (currentVideoURL.equals("")) {
-                playerView.setVisibility(GONE);
+                playerView.setVisibility(View.GONE);
                 releasePlayer();
             } else {
                 initializePlayer(currentVideoURL);
@@ -176,7 +192,7 @@ public class StepDetailFragment extends Fragment {
         hideSystemUi();
         if ((Util.SDK_INT <= 23 || player == null)) {
             if (currentVideoURL.equals("")) {
-                playerView.setVisibility(GONE);
+                playerView.setVisibility(View.GONE);
                 releasePlayer();
             } else {
                 initializePlayer(currentVideoURL);
@@ -205,6 +221,5 @@ public class StepDetailFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putLong("playbackPosition", player.getCurrentPosition());
     }
-
 
 }
