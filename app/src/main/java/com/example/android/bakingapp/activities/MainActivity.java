@@ -3,17 +3,22 @@ package com.example.android.bakingapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.android.bakingapp.BakingApplication;
+import com.example.android.bakingapp.DeviceUtils;
 import com.example.android.bakingapp.NetworkUtils;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.adapters.RecipesAdapter;
@@ -22,10 +27,24 @@ import com.example.android.bakingapp.objects.Recipe;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity implements RecipesAdapter.RecipesAdapterOnClickHandler {
 
-    Context context;
+    @BindView(R.id.recipes_recycler_view)
     RecyclerView recipesRecyclerView;
+
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
+
+    CountingIdlingResource mIdlingResource = new CountingIdlingResource("DATA_LOADER");
+
+    public IdlingResource getIdlingResource() {
+        return mIdlingResource;
+    }
+
+    Context context;
     RecyclerView.LayoutManager portraitLayoutManager;
     RecyclerView.LayoutManager landLayoutManager;
     RecipesAdapter recipesAdapter;
@@ -36,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
         toolbar.setTitle("Recipes");
@@ -45,20 +65,18 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
         portraitLayoutManager = new LinearLayoutManager(this);
         landLayoutManager = new GridLayoutManager(this,3);
 
-        if (findViewById(R.id.recipes_recycler_view) != null) {
-            recipesRecyclerView = (RecyclerView) findViewById(R.id.recipes_recycler_view);
+        context = getApplicationContext();
+        if (!DeviceUtils.isLandscape(context) && !DeviceUtils.isTablet(context)) {
             recipesRecyclerView.setLayoutManager(portraitLayoutManager);
-        } else if (findViewById(R.id.recipes_recycler_view_land) != null) {
-            recipesRecyclerView = (RecyclerView) findViewById(R.id.recipes_recycler_view_land);
-            recipesRecyclerView.setLayoutManager(landLayoutManager);
         } else {
-            recipesRecyclerView = (RecyclerView) findViewById(R.id.recipes_recycler_view_tablet);
             recipesRecyclerView.setLayoutManager(landLayoutManager);
         }
 
         recipesAdapter = new RecipesAdapter(this);
         recipesRecyclerView.setAdapter(recipesAdapter);
 
+        mIdlingResource.increment();
+        progressBar.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
 
             @Override
@@ -68,11 +86,14 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
                 JSONObject[] jsonObjectArray = NetworkUtils.getJsonObjectArray(jsonArray);
                 Recipe[] recipes = NetworkUtils.convertToRecipes(jsonObjectArray);
                 recipesAdapter.setData(recipes);
+                mIdlingResource.decrement();
+                progressBar.setVisibility(View.INVISIBLE);
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.INVISIBLE);
                 System.out.println("Something went wrong.");
                 error.printStackTrace();
             }
@@ -92,4 +113,5 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
 
         startActivity(intent);
     }
+
 }

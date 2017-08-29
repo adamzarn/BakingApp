@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.android.bakingapp.R;
@@ -29,6 +28,10 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
@@ -37,6 +40,17 @@ import static android.view.View.VISIBLE;
  */
 
 public class StepDetailFragment extends Fragment {
+
+    @BindView(R.id.step_detail_title)
+    TextView stepDetailTitle;
+
+    @BindView(R.id.description_text_view)
+    TextView descriptionTextView;
+
+    @OnClick({R.id.next_step_button, R.id.previous_step_button})
+    public void onNextStepButtonClick(View v) {
+        mCallback.onButtonSelected(v, position, steps);
+    }
 
     public StepDetailFragment() {
     }
@@ -52,7 +66,7 @@ public class StepDetailFragment extends Fragment {
     private boolean playWhenReady = true;
     private String currentVideoURL;
 
-    int currentStep;
+    int position;
     ArrayList<Step> steps;
 
     OnButtonClickListener mCallback;
@@ -74,37 +88,18 @@ public class StepDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        currentStep = this.getArguments().getInt("Step");
-        steps = this.getArguments().getParcelableArrayList("Steps");
-        Step step = steps.get(currentStep);
-
         View rootView = inflater.inflate(R.layout.step_detail_fragment, container, false);
+        ButterKnife.bind(this, rootView);
 
-        TextView shortDescription = (TextView) rootView.findViewById(R.id.step_detail_title);
-        shortDescription.setText(step.getShortDescription());
+        position = this.getArguments().getInt("Step");
+        steps = this.getArguments().getParcelableArrayList("Steps");
+        Step currentStep = steps.get(position);
 
-        TextView description = (TextView) rootView.findViewById(R.id.description_text_view);
-        description.setText(step.getDescription());
-
-        Button nextStepButton = (Button) rootView.findViewById(R.id.next_step_button);
-        Button previousStepButton = (Button) rootView.findViewById(R.id.previous_step_button);
-
-        nextStepButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCallback.onButtonSelected(v, currentStep, steps);
-            }
-        });
-
-        previousStepButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCallback.onButtonSelected(v, currentStep, steps);
-            }
-        });
+        stepDetailTitle.setText(currentStep.getShortDescription());
+        descriptionTextView.setText(currentStep.getDescription());
 
         playerView = (SimpleExoPlayerView) rootView.findViewById(R.id.video_view);
-        currentVideoURL = step.getVideoURL();
+        currentVideoURL = currentStep.getVideoURL();
 
         return rootView;
 

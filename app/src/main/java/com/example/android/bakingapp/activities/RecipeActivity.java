@@ -1,5 +1,6 @@
 package com.example.android.bakingapp.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -8,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.android.bakingapp.DeviceUtils;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.fragments.IngredientsAndStepsFragment;
 import com.example.android.bakingapp.fragments.StepDetailFragment;
@@ -51,7 +53,8 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        if (findViewById(R.id.step_detail_container) != null) {
+        Context context = getApplicationContext();
+        if (DeviceUtils.isTablet(context)) {
             mTwoPane = true;
             Bundle stepsBundle = new Bundle();
             stepsBundle.putInt("Step", currentStep);

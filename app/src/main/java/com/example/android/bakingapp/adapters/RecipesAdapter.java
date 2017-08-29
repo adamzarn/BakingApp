@@ -32,6 +32,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
     @Override
     public void onBindViewHolder(RecipesAdapter.ViewHolder viewHolder, int i) {
         viewHolder.recipeTitle.setText(myRecipes[i].getName());
+        viewHolder.servings.setText("Serves " + myRecipes[i].getServings());
     }
 
     @Override
@@ -44,10 +45,12 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView recipeTitle;
+        public TextView servings;
 
         public ViewHolder(View view) {
             super(view);
             recipeTitle = (TextView) view.findViewById(R.id.recipe_title);
+            servings = (TextView) view.findViewById(R.id.servings);
             view.setOnClickListener(this);
         }
 

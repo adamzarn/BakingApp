@@ -11,31 +11,42 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/MyTheme">
         <activity
             android:name=".activities.MainActivity"
             android:theme="@style/NoActionBarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.RecipeActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/NoActionBarTheme">
-            android:parentActivityName="com.example.android.bakingapp.activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.bakingapp.activities.MainActivity" />
         </activity>
         <activity
             android:name=".activities.DetailActivity"
-            android:theme="@style/NoActionBarTheme"
-            android:parentActivityName="com.example.android.bakingapp.activities.RecipeActivity">
+            android:parentActivityName=".activities.RecipeActivity"
+            android:theme="@style/NoActionBarTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.bakingapp.activities.MainActivity" />
         </activity>
+
+        <receiver android:name=".RecipeWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_widget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>

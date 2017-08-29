@@ -20,16 +20,33 @@ import com.example.android.bakingapp.objects.Step;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by adamzarn on 8/17/17.
  */
 
 public class IngredientsAndStepsFragment extends Fragment {
 
+    @BindView(R.id.scroll_view)
+    ScrollView scrollView;
+
+    @BindView(R.id.ingredients_header)
+    TextView ingredientsHeader;
+
+    @BindView(R.id.steps_header)
+    TextView stepsHeader;
+
+    @BindView(R.id.ingredients_text_view)
+    TextView ingredientsTextView;
+
+    @BindView(R.id.steps_recycler_view)
+    RecyclerView stepsRecyclerView;
+
     public IngredientsAndStepsFragment() {
     }
 
-    private ScrollView scrollView;
     private Recipe selectedRecipe;
 
     OnStepClickListener mCallback;
@@ -51,19 +68,17 @@ public class IngredientsAndStepsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        View rootView = inflater.inflate(R.layout.ingredients_and_steps_fragment, container, false);
+        ButterKnife.bind(this, rootView);
+
         if (savedInstanceState == null) {
             selectedRecipe = this.getArguments().getParcelable("recipe");
         } else {
             selectedRecipe = savedInstanceState.getParcelable("recipe");
         }
 
-        View rootView = inflater.inflate(R.layout.ingredients_and_steps_fragment, container, false);
-        TextView ingredients = (TextView) rootView.findViewById(R.id.ingredients_header);
-        ingredients.setText(getResources().getString(R.string.ingredients_header));
-        TextView steps = (TextView) rootView.findViewById(R.id.steps_header);
-        steps.setText(getResources().getString(R.string.steps_header));
-
-        TextView ingredientsTextView = (TextView) rootView.findViewById(R.id.ingredients_text_view);
+        ingredientsHeader.setText(getResources().getString(R.string.ingredients_header));
+        stepsHeader.setText(getResources().getString(R.string.steps_header));
 
         String ingredientsText = "";
         Ingredient[] ingredientsList = selectedRecipe.getIngredients();
@@ -78,7 +93,6 @@ public class IngredientsAndStepsFragment extends Fragment {
         }
         ingredientsTextView.setText(ingredientsText);
 
-        RecyclerView stepsRecyclerView = (RecyclerView) rootView.findViewById(R.id.steps_recycler_view);
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         StepsAdapter stepsAdapter = new StepsAdapter();
         stepsRecyclerView.setAdapter(stepsAdapter);
@@ -91,8 +105,6 @@ public class IngredientsAndStepsFragment extends Fragment {
         });
 
         stepsAdapter.setData(selectedRecipe.getSteps());
-
-        scrollView = (ScrollView) rootView.findViewById(R.id.scroll_view);
 
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override

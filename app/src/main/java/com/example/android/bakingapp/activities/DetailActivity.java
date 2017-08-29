@@ -1,14 +1,16 @@
 package com.example.android.bakingapp.activities;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import com.example.android.bakingapp.DeviceUtils;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.fragments.StepDetailFragment;
 import com.example.android.bakingapp.objects.Step;
@@ -43,25 +45,42 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
 
     private SimpleExoPlayer player;
     private SimpleExoPlayerView playerView;
+    private TextView noVideoToDisplayTextView;
 
     private long playbackPosition;
     private int currentWindow;
     private boolean playWhenReady = true;
     private String currentVideoURL = "";
 
+    String currentRecipe;
+    int position;
+    ArrayList<Step> steps;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        String currentRecipe = getIntent().getExtras().getString("Recipe");
-        int currentStep = getIntent().getExtras().getInt("Step");
-        ArrayList<Step> steps = getIntent().getExtras().getParcelableArrayList("Steps");
+        if (savedInstanceState == null) {
+            currentRecipe = getIntent().getExtras().getString("Recipe");
+            position = getIntent().getExtras().getInt("Step");
+            steps = getIntent().getExtras().getParcelableArrayList("Steps");
+        } else {
+            currentRecipe = savedInstanceState.getString("Recipe");
+            position = savedInstanceState.getInt("Step");
+            steps = savedInstanceState.getParcelableArrayList("Steps");
+        }
 
-        if (findViewById(R.id.step_detail_container) == null) {
+        Context context = getApplicationContext();
+        if (DeviceUtils.isLandscape(context) && !DeviceUtils.isTablet(context)) {
 
             playerView = (SimpleExoPlayerView) findViewById(R.id.video_view);
-            currentVideoURL = steps.get(currentStep).getVideoURL();
+            currentVideoURL = steps.get(position).getVideoURL();
+            noVideoToDisplayTextView = (TextView) findViewById(R.id.no_video_to_display);
+
+            if (!currentVideoURL.equals("")) {
+                noVideoToDisplayTextView.setVisibility(View.INVISIBLE);
+            }
 
         } else {
 
@@ -73,7 +92,7 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
 
             Bundle stepsBundle = new Bundle();
             stepsBundle.putString("Recipe", currentRecipe);
-            stepsBundle.putInt("Step", currentStep);
+            stepsBundle.putInt("Step", position);
             stepsBundle.putParcelableArrayList("Steps", steps);
             StepDetailFragment stepDetailFragment = new StepDetailFragment();
             stepDetailFragment.setArguments(stepsBundle);
@@ -86,7 +105,6 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
                         .commit();
             } else {
                 playbackPosition = savedInstanceState.getLong("playbackPosition");
-                System.out.println("Here I am: " + playbackPosition);
                 fragmentManager.beginTransaction()
                         .replace(R.id.step_detail_container, stepDetailFragment)
                         .commit();
@@ -129,6 +147,7 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle stepsBundle = new Bundle();
         stepsBundle.putInt("Step", newPosition);
+        this.position = newPosition;
         stepsBundle.putParcelableArrayList("Steps", steps);
         StepDetailFragment newStepDetailFragment = new StepDetailFragment();
         newStepDetailFragment.setArguments(stepsBundle);
@@ -233,12 +252,9 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
-        if (player != null) {
-            outState.putLong("playbackPosition", player.getCurrentPosition());
-        } else {
-            outState.putLong("playbackPosition", 0);
-        }
+    public void onSaveInstanceState (Bundle outState) {
+        outState.putString("Recipe", currentRecipe);
+        outState.putInt("Step", position);
+        outState.putParcelableArrayList("Steps", steps);
     }
 }
