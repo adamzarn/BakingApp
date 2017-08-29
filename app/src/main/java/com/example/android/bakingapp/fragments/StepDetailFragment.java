@@ -101,6 +101,12 @@ public class StepDetailFragment extends Fragment {
         playerView = (SimpleExoPlayerView) rootView.findViewById(R.id.video_view);
         currentVideoURL = currentStep.getVideoURL();
 
+        if (savedInstanceState != null) {
+            playbackPosition = savedInstanceState.getLong("playbackPosition");
+        } else {
+            playbackPosition = 0;
+        }
+
         return rootView;
 
     }
@@ -193,5 +199,12 @@ public class StepDetailFragment extends Fragment {
             releasePlayer();
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("playbackPosition", player.getCurrentPosition());
+    }
+
 
 }

@@ -65,10 +65,12 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
             currentRecipe = getIntent().getExtras().getString("Recipe");
             position = getIntent().getExtras().getInt("Step");
             steps = getIntent().getExtras().getParcelableArrayList("Steps");
+            playbackPosition = 0;
         } else {
             currentRecipe = savedInstanceState.getString("Recipe");
             position = savedInstanceState.getInt("Step");
             steps = savedInstanceState.getParcelableArrayList("Steps");
+            playbackPosition = savedInstanceState.getLong("playbackPosition");
         }
 
         Context context = getApplicationContext();
@@ -99,12 +101,10 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
             FragmentManager fragmentManager = getSupportFragmentManager();
 
             if (savedInstanceState == null) {
-                playbackPosition = 0;
                 fragmentManager.beginTransaction()
                         .add(R.id.step_detail_container, stepDetailFragment)
                         .commit();
             } else {
-                playbackPosition = savedInstanceState.getLong("playbackPosition");
                 fragmentManager.beginTransaction()
                         .replace(R.id.step_detail_container, stepDetailFragment)
                         .commit();
@@ -256,5 +256,6 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
         outState.putString("Recipe", currentRecipe);
         outState.putInt("Step", position);
         outState.putParcelableArrayList("Steps", steps);
+        outState.putLong("playbackPosition", player.getCurrentPosition());
     }
 }
