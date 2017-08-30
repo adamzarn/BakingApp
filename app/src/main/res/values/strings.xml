@@ -5,7 +5,7 @@
     <string name="steps_header">Steps</string>
     <string name="next_step_button_text">Next Step</string>
     <string name="previous_step_button_text">Previous Step</string>
-    <string name="no_video_to_display">No Video to Display.</string>
+    <string name="no_media_available">No Media Available.</string>
     <string name="appwidget_text">R</string>
     <string name="add_widget">Add widget</string>
 

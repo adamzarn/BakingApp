@@ -1,15 +1,22 @@
 package com.example.android.bakingapp.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.example.android.bakingapp.BakingApplication;
 import com.example.android.bakingapp.DeviceUtils;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.objects.Step;
@@ -45,6 +52,15 @@ public class StepDetailFragment extends Fragment {
     @BindView(R.id.step_detail_title)
     TextView stepDetailTitle;
 
+    @BindView(R.id.thumbnail_view)
+    ImageView thumbnailView;
+
+    @BindView(R.id.video_view)
+    SimpleExoPlayerView playerView;
+
+    @BindView(R.id.no_media_available)
+    TextView noMediaAvailableTextView;
+
     @BindView(R.id.description_text_view)
     TextView descriptionTextView;
 
@@ -65,12 +81,12 @@ public class StepDetailFragment extends Fragment {
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
     private SimpleExoPlayer player;
-    private SimpleExoPlayerView playerView;
 
     private long playbackPosition;
     private int currentWindow;
     private boolean playWhenReady = true;
     private String currentVideoURL;
+    private String currentThumbnailURL;
 
     int position;
     ArrayList<Step> steps;
@@ -103,9 +119,8 @@ public class StepDetailFragment extends Fragment {
 
         stepDetailTitle.setText(currentStep.getShortDescription());
         descriptionTextView.setText(currentStep.getDescription());
-
-        playerView = (SimpleExoPlayerView) rootView.findViewById(R.id.video_view);
         currentVideoURL = currentStep.getVideoURL();
+        currentThumbnailURL = currentStep.getThumbnailURL();
 
         if (savedInstanceState != null) {
             playbackPosition = savedInstanceState.getLong("playbackPosition");
@@ -119,6 +134,34 @@ public class StepDetailFragment extends Fragment {
             descriptionTextView.setVisibility(View.GONE);
             nextStepButton.setVisibility(View.GONE);
             previousStepButton.setVisibility(View.GONE);
+        }
+
+        noMediaAvailableTextView.setVisibility(View.VISIBLE);
+        thumbnailView.setVisibility(View.VISIBLE);
+        if (currentVideoURL.equals("")) {
+            if (currentThumbnailURL.equals("")) {
+                thumbnailView.setImageDrawable(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.no_media_available));
+                noMediaAvailableTextView.setVisibility(View.GONE);
+            } else {
+                ImageRequest imageRequest = new ImageRequest(currentThumbnailURL, new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        thumbnailView.setImageBitmap(response);
+                        noMediaAvailableTextView.setVisibility(View.GONE);
+                    }
+                }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        thumbnailView.setImageDrawable(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.no_media_available));
+                        noMediaAvailableTextView.setVisibility(View.GONE);
+                    }
+                });
+                BakingApplication.getInstance().addToRequestQueue(imageRequest);
+            }
+        } else {
+            noMediaAvailableTextView.setVisibility(View.GONE);
+            thumbnailView.setVisibility(View.GONE);
         }
 
         return rootView;
@@ -219,7 +262,11 @@ public class StepDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putLong("playbackPosition", player.getCurrentPosition());
+        if (player != null) {
+            outState.putLong("playbackPosition", player.getCurrentPosition());
+        } else {
+            outState.putLong("playbackPosition", 0);
+        }
     }
 
 }

@@ -58,7 +58,6 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
                     viewHolder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cupcake));
                 }
             });
-
             BakingApplication.getInstance().addToRequestQueue(imageRequest);
         } else {
             viewHolder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cupcake));
