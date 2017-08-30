@@ -15,28 +15,41 @@
     android:clickable="true">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/recipe_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/padding_small"
-            android:textAlignment="center"
-            android:textSize="@dimen/text_huge"
-            tools:text="Recipe" />
+        <ImageView
+            android:id="@+id/image_view"
+            android:layout_margin="@dimen/padding_small"
+            android:layout_width="100dp"
+            android:layout_height="100dp" />
 
-        <TextView
-            android:id="@+id/servings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/padding_small"
-            android:paddingRight="@dimen/padding_small"
-            android:paddingBottom="@dimen/padding_small"
-            android:textSize="@dimen/text_medium"
-            tools:text="Servings"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/recipe_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_small"
+                android:textAlignment="center"
+                android:textSize="@dimen/text_huge"
+                tools:text="Recipe" />
+
+            <TextView
+                android:id="@+id/servings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/padding_small"
+                android:paddingRight="@dimen/padding_small"
+                android:paddingBottom="@dimen/padding_small"
+                android:textSize="@dimen/text_medium"
+                tools:text="Servings"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

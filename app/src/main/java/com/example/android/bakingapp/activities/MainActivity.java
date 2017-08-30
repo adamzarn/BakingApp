@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
     RecyclerView.LayoutManager landLayoutManager;
     RecipesAdapter recipesAdapter;
 
-    private static final String url = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
         appCompatActivity.setSupportActionBar(toolbar);
 
         portraitLayoutManager = new LinearLayoutManager(this);
-        landLayoutManager = new GridLayoutManager(this,3);
+        landLayoutManager = new GridLayoutManager(this, 2);
 
         context = getApplicationContext();
         if (!DeviceUtils.isLandscape(context) && !DeviceUtils.isTablet(context)) {
@@ -77,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
 
         mIdlingResource.increment();
         progressBar.setVisibility(View.VISIBLE);
+        String url = getApplicationContext().getResources().getString(R.string.baking_data_url);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
 
             @Override
