@@ -30,13 +30,13 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
         setContentView(R.layout.activity_detail);
 
         if (savedInstanceState == null) {
-            currentRecipe = getIntent().getExtras().getString("Recipe");
-            position = getIntent().getExtras().getInt("Step");
-            steps = getIntent().getExtras().getParcelableArrayList("Steps");
+            currentRecipe = getIntent().getExtras().getString(getResources().getString(R.string.recipe_key));
+            position = getIntent().getExtras().getInt(getResources().getString(R.string.step_key));
+            steps = getIntent().getExtras().getParcelableArrayList(getResources().getString(R.string.steps_key));
         } else {
-            currentRecipe = savedInstanceState.getString("Recipe");
-            position = savedInstanceState.getInt("Step");
-            steps = savedInstanceState.getParcelableArrayList("Steps");
+            currentRecipe = savedInstanceState.getString(getResources().getString(R.string.recipe_key));
+            position = savedInstanceState.getInt(getResources().getString(R.string.step_key));
+            steps = savedInstanceState.getParcelableArrayList(getResources().getString(R.string.steps_key));
         }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.step_detail_toolbar);
@@ -50,9 +50,9 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
         }
 
         Bundle stepsBundle = new Bundle();
-        stepsBundle.putString("Recipe", currentRecipe);
-        stepsBundle.putInt("Step", position);
-        stepsBundle.putParcelableArrayList("Steps", steps);
+        stepsBundle.putString(getResources().getString(R.string.recipe_key), currentRecipe);
+        stepsBundle.putInt(getResources().getString(R.string.step_key), position);
+        stepsBundle.putParcelableArrayList(getResources().getString(R.string.steps_key), steps);
         StepDetailFragment stepDetailFragment = new StepDetailFragment();
         stepDetailFragment.setArguments(stepsBundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -98,9 +98,9 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         Bundle stepsBundle = new Bundle();
-        stepsBundle.putInt("Step", newPosition);
+        stepsBundle.putInt(getResources().getString(R.string.step_key), newPosition);
         this.position = newPosition;
-        stepsBundle.putParcelableArrayList("Steps", steps);
+        stepsBundle.putParcelableArrayList(getResources().getString(R.string.steps_key), steps);
         StepDetailFragment newStepDetailFragment = new StepDetailFragment();
         newStepDetailFragment.setArguments(stepsBundle);
         fragmentManager.beginTransaction()
@@ -111,8 +111,8 @@ public class DetailActivity extends AppCompatActivity implements StepDetailFragm
     @Override
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("Recipe", currentRecipe);
-        outState.putInt("Step", position);
-        outState.putParcelableArrayList("Steps", steps);
+        outState.putString(getResources().getString(R.string.recipe_key), currentRecipe);
+        outState.putInt(getResources().getString(R.string.step_key), position);
+        outState.putParcelableArrayList(getResources().getString(R.string.steps_key), steps);
     }
 }

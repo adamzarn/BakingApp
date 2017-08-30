@@ -8,6 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.example.android.bakingapp.BakingApplication.getContext;
+
 /**
  * Created by adamzarn on 8/16/17.
  */
@@ -42,21 +44,21 @@ public class NetworkUtils {
         int i = 0;
         for (JSONObject recipe: jsonObjectArray) {
             try {
-                String id = recipe.getString("id");
+                String id = recipe.getString(getContext().getString(R.string.id));
 
-                String name = recipe.getString("name");
+                String name = recipe.getString(getContext().getString(R.string.name));
 
-                JSONArray ingredientsData = recipe.getJSONArray("ingredients");
+                JSONArray ingredientsData = recipe.getJSONArray(getContext().getString(R.string.ingredients));
                 JSONObject[] ingredientObjects = getJsonObjectArray(ingredientsData);
                 Ingredient[] ingredients = convertToIngredients(ingredientObjects);
 
-                JSONArray stepsData = recipe.getJSONArray("steps");
+                JSONArray stepsData = recipe.getJSONArray(getContext().getString(R.string.steps));
                 JSONObject[] stepObjects = getJsonObjectArray(stepsData);
                 Step[] steps = convertToSteps(stepObjects);
 
-                String servings = recipe.getString("servings");
+                String servings = recipe.getString(getContext().getString(R.string.servings));
 
-                String image = recipe.getString("image");
+                String image = recipe.getString(getContext().getString(R.string.image));
 
                 Recipe newRecipe = new Recipe(id, name, ingredients, steps, servings, image);
                 recipes[i] = newRecipe;
@@ -73,9 +75,9 @@ public class NetworkUtils {
         int i = 0;
         for (JSONObject ingredient: jsonObjectArray) {
             try {
-                String quantity = ingredient.getString("quantity");
-                String measure = ingredient.getString("measure");
-                String item = ingredient.getString("ingredient");
+                String quantity = ingredient.getString(getContext().getString(R.string.quantity));
+                String measure = ingredient.getString(getContext().getString(R.string.measure));
+                String item = ingredient.getString(getContext().getString(R.string.ingredient));
                 Ingredient newIngredient = new Ingredient(quantity, measure, item);
                 ingredients[i] = newIngredient;
             } catch (JSONException e) {
@@ -91,11 +93,11 @@ public class NetworkUtils {
         int i = 0;
         for (JSONObject step: jsonObjectArray) {
             try {
-                String id = step.getString("id");
-                String shortDescription = step.getString("shortDescription");
-                String description = step.getString("description");
-                String videoURL = step.getString("videoURL");
-                String thumbnailURL = step.getString("thumbnailURL");
+                String id = step.getString(getContext().getString(R.string.step_id));
+                String shortDescription = step.getString(getContext().getString(R.string.shortDescription));
+                String description = step.getString(getContext().getString(R.string.description));
+                String videoURL = step.getString(getContext().getString(R.string.videoURL));
+                String thumbnailURL = step.getString(getContext().getString(R.string.thumbnailURL));
                 Step newStep = new Step(id, shortDescription, description, videoURL, thumbnailURL);
                 steps[i] = newStep;
             } catch (JSONException e) {

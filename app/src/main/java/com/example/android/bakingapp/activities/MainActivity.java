@@ -30,6 +30,8 @@ import org.json.JSONObject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.example.android.bakingapp.BakingApplication.getContext;
+
 public class MainActivity extends AppCompatActivity implements RecipesAdapter.RecipesAdapterOnClickHandler {
 
     @BindView(R.id.recipes_recycler_view)
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
-    CountingIdlingResource mIdlingResource = new CountingIdlingResource("DATA_LOADER");
+    CountingIdlingResource mIdlingResource = new CountingIdlingResource(getContext().getResources().getString(R.string.resource));
 
     public IdlingResource getIdlingResource() {
         return mIdlingResource;
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
         ButterKnife.bind(this);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.main_activity_toolbar);
-        toolbar.setTitle("Recipes");
+        toolbar.setTitle(getResources().getString(R.string.main_activity_title));
         AppCompatActivity appCompatActivity = (AppCompatActivity) this;
         appCompatActivity.setSupportActionBar(toolbar);
 
@@ -93,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressBar.setVisibility(View.INVISIBLE);
-                System.out.println("Something went wrong.");
                 error.printStackTrace();
             }
         });
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
         context = getApplicationContext();
         Intent intent = new Intent(context, recipeActivity);
 
-        intent.putExtra("recipe", selectedRecipe);
+        intent.putExtra(getResources().getString(R.string.recipe_key), selectedRecipe);
 
         startActivity(intent);
     }

@@ -1,6 +1,7 @@
 package com.example.android.bakingapp;
 
 import android.app.Application;
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -17,9 +18,16 @@ public class BakingApplication extends Application {
     private static RequestQueue requestQueue;
     private static String TAG = "DEFAULT";
 
+    private static Context mContext;
+
+    public static Context getContext(){
+        return mContext;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext = getApplicationContext();
         instance = this;
     }
 

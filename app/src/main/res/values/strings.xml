@@ -1,14 +1,48 @@
 <resources>
     <string name="app_name">Baking App</string>
+
     <string name="baking_data_url">https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json</string>
+
+    <string name="id">id</string>
+    <string name="name">name</string>
+    <string name="ingredients">ingredients</string>
+    <string name="steps">steps</string>
+    <string name="servings">servings</string>
+    <string name="image">image</string>
+
+    <string name="quantity">quantity</string>
+    <string name="measure">measure</string>
+    <string name="ingredient">ingredient</string>
+
+    <string name="step_id">id</string>
+    <string name="shortDescription">shortDescription</string>
+    <string name="description">description</string>
+    <string name="videoURL">videoURL</string>
+    <string name="thumbnailURL">thumbnailURL</string>
+
     <string name="ingredients_header">Ingredients</string>
     <string name="steps_header">Steps</string>
     <string name="next_step_button_text">Next Step</string>
     <string name="previous_step_button_text">Previous Step</string>
     <string name="no_media_available">No Media Available.</string>
+    <string name="main_activity_title">Recipes</string>
+
     <string name="appwidget_text">R</string>
     <string name="add_widget">Add widget</string>
     <string name="set_widget">SET AS WIDGET</string>
+
     <string name="my_preferences">My Preferences</string>
+
+    <string name="recipe_key">recipe</string>
+    <string name="step_key">step</string>
+    <string name="steps_key">steps</string>
+    <string name="widget_recipe_key">widgetRecipe</string>
+    <string name="playback_position_key">playbackPosition</string>
+
+    <string name="resource">DATA_LOADER</string>
+    <string name="toast_message">This app\'s widget will now display the recipe for </string>
+    <string name="serves">Serves </string>
+    <string name="on_step_exception"> must implement OnStepClickListener</string>
+    <string name="on_button_exception"> must implement OnButtonClickListener</string>
 
 </resources>

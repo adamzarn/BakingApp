@@ -103,7 +103,7 @@ public class StepDetailFragment extends Fragment {
         try {
             mCallback = (OnButtonClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnButtonClickListener");
+            throw new ClassCastException(context.toString() + getActivity().getResources().getString(R.string.on_button_exception));
         }
     }
 
@@ -113,8 +113,8 @@ public class StepDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.step_detail_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
-        position = this.getArguments().getInt("Step");
-        steps = this.getArguments().getParcelableArrayList("Steps");
+        position = this.getArguments().getInt(getActivity().getResources().getString(R.string.step_key));
+        steps = this.getArguments().getParcelableArrayList(getActivity().getResources().getString(R.string.steps_key));
         Step currentStep = steps.get(position);
 
         stepDetailTitle.setText(currentStep.getShortDescription());
@@ -123,7 +123,7 @@ public class StepDetailFragment extends Fragment {
         currentThumbnailURL = currentStep.getThumbnailURL();
 
         if (savedInstanceState != null) {
-            playbackPosition = savedInstanceState.getLong("playbackPosition");
+            playbackPosition = savedInstanceState.getLong(getActivity().getResources().getString(R.string.playback_position_key));
         } else {
             playbackPosition = 0;
         }
@@ -140,21 +140,29 @@ public class StepDetailFragment extends Fragment {
         thumbnailView.setVisibility(View.VISIBLE);
         if (currentVideoURL.equals("")) {
             if (currentThumbnailURL.equals("")) {
-                thumbnailView.setImageDrawable(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.no_media_available));
+                thumbnailView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.no_media_available));
                 noMediaAvailableTextView.setVisibility(View.GONE);
             } else {
                 ImageRequest imageRequest = new ImageRequest(currentThumbnailURL, new Response.Listener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
-                        thumbnailView.setImageBitmap(response);
-                        noMediaAvailableTextView.setVisibility(View.GONE);
+                        try {
+                            thumbnailView.setImageBitmap(response);
+                            noMediaAvailableTextView.setVisibility(View.GONE);
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
-                        thumbnailView.setImageDrawable(ContextCompat.getDrawable(getActivity().getApplicationContext(), R.drawable.no_media_available));
-                        noMediaAvailableTextView.setVisibility(View.GONE);
+                        try {
+                            thumbnailView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.no_media_available));
+                            noMediaAvailableTextView.setVisibility(View.GONE);
+                        } catch (NullPointerException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
                 BakingApplication.getInstance().addToRequestQueue(imageRequest);
@@ -263,9 +271,9 @@ public class StepDetailFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (player != null) {
-            outState.putLong("playbackPosition", player.getCurrentPosition());
+            outState.putLong(getActivity().getResources().getString(R.string.playback_position_key), player.getCurrentPosition());
         } else {
-            outState.putLong("playbackPosition", 0);
+            outState.putLong(getActivity().getResources().getString(R.string.playback_position_key), 0);
         }
     }
 

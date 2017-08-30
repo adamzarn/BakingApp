@@ -61,7 +61,7 @@ public class IngredientsAndStepsFragment extends Fragment {
         try {
             mCallback = (OnStepClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnStepClickListener");
+            throw new ClassCastException(context.toString() + getActivity().getResources().getString(R.string.on_step_exception));
         }
     }
 
@@ -72,9 +72,9 @@ public class IngredientsAndStepsFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         if (savedInstanceState == null) {
-            selectedRecipe = this.getArguments().getParcelable("recipe");
+            selectedRecipe = this.getArguments().getParcelable(getActivity().getResources().getString(R.string.recipe_key));
         } else {
-            selectedRecipe = savedInstanceState.getParcelable("recipe");
+            selectedRecipe = savedInstanceState.getParcelable(getActivity().getResources().getString(R.string.recipe_key));
         }
 
         ingredientsHeader.setText(getResources().getString(R.string.ingredients_header));
@@ -120,7 +120,7 @@ public class IngredientsAndStepsFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("recipe", selectedRecipe);
+        outState.putParcelable(getActivity().getResources().getString(R.string.recipe_key), selectedRecipe);
     }
 }
 

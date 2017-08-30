@@ -50,21 +50,21 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
 
         if (savedInstanceState == null) {
             try {
-                selectedRecipe = getIntent().getExtras().getParcelable("recipe");
+                selectedRecipe = getIntent().getExtras().getParcelable(getResources().getString(R.string.recipe_key));
                 recipe = selectedRecipe.getName();
                 currentStep = 0;
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         } else {
-            selectedRecipe = savedInstanceState.getParcelable("recipe");
+            selectedRecipe = savedInstanceState.getParcelable(getResources().getString(R.string.recipe_key));
             recipe = selectedRecipe.getName();
-            currentStep = savedInstanceState.getInt("currentStep");
+            currentStep = savedInstanceState.getInt(getResources().getString(R.string.step_key));
         }
 
         if (selectedRecipe == null) {
             SharedPreferences preferences = getApplicationContext().getSharedPreferences(getString(R.string.my_preferences), Context.MODE_PRIVATE);
-            recipe = preferences.getString("widgetRecipe", "");
+            recipe = preferences.getString(getResources().getString(R.string.widget_recipe_key), "");
 
             String url = getApplicationContext().getResources().getString(R.string.baking_data_url);
             StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -82,12 +82,12 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
                             }
                         }
                     }
+                    recipe = selectedRecipe.getName();
                     setUpView(recipe);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    System.out.println("Something went wrong.");
                     error.printStackTrace();
                 }
             });
@@ -109,7 +109,7 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
         appCompatActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Bundle recipeBundle = new Bundle();
-        recipeBundle.putParcelable("recipe", selectedRecipe);
+        recipeBundle.putParcelable(getResources().getString(R.string.recipe_key), selectedRecipe);
         IngredientsAndStepsFragment recipeStepsFragment = new IngredientsAndStepsFragment();
         recipeStepsFragment.setArguments(recipeBundle);
 
@@ -120,8 +120,8 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
             if (DeviceUtils.isTablet(context)) {
                 mTwoPane = true;
                 Bundle stepsBundle = new Bundle();
-                stepsBundle.putInt("Step", currentStep);
-                stepsBundle.putParcelableArrayList("Steps", new ArrayList<>(Arrays.asList(selectedRecipe.getSteps())));
+                stepsBundle.putInt(getResources().getString(R.string.step_key), currentStep);
+                stepsBundle.putParcelableArrayList(getResources().getString(R.string.steps_key), new ArrayList<>(Arrays.asList(selectedRecipe.getSteps())));
                 StepDetailFragment stepDetailFragment = new StepDetailFragment();
                 stepDetailFragment.setArguments(stepsBundle);
                 fragmentManager.beginTransaction()
@@ -155,9 +155,9 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
             case R.id.set_widget:
                 SharedPreferences preferences = getApplicationContext().getSharedPreferences(getString(R.string.my_preferences), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("widgetRecipe", recipe);
+                editor.putString(getResources().getString(R.string.widget_recipe_key), recipe);
                 editor.apply();
-                Toast toast = Toast.makeText(getApplicationContext(), "This app's widget will now display the recipe for " + recipe, Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_message) + recipe, Toast.LENGTH_LONG);
                 TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
                 if (v != null) v.setGravity(Gravity.CENTER);
                 toast.show();
@@ -171,9 +171,9 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
         if (mTwoPane) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Bundle stepsBundle = new Bundle();
-            stepsBundle.putInt("Step", position);
+            stepsBundle.putInt(getResources().getString(R.string.step_key), position);
             currentStep = position;
-            stepsBundle.putParcelableArrayList("Steps", steps);
+            stepsBundle.putParcelableArrayList(getResources().getString(R.string.steps_key), steps);
             StepDetailFragment newStepDetailFragment = new StepDetailFragment();
             newStepDetailFragment.setArguments(stepsBundle);
             fragmentManager.beginTransaction()
@@ -183,9 +183,9 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
             Class stepDetailActivity = DetailActivity.class;
             Intent intent = new Intent(getApplicationContext(), stepDetailActivity);
 
-            intent.putExtra("Recipe", recipe);
-            intent.putExtra("Step", position);
-            intent.putParcelableArrayListExtra("Steps", steps);
+            intent.putExtra(getResources().getString(R.string.recipe_key), recipe);
+            intent.putExtra(getResources().getString(R.string.step_key), position);
+            intent.putParcelableArrayListExtra(getResources().getString(R.string.steps_key), steps);
 
             startActivity(intent);
         }
@@ -214,7 +214,7 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         Bundle recipeBundle = new Bundle();
-        recipeBundle.putParcelable("recipe", selectedRecipe);
+        recipeBundle.putParcelable(getResources().getString(R.string.recipe_key), selectedRecipe);
         IngredientsAndStepsFragment recipeStepsFragment = new IngredientsAndStepsFragment();
         recipeStepsFragment.setArguments(recipeBundle);
 
@@ -223,8 +223,8 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
                 .commit();
 
         Bundle stepsBundle = new Bundle();
-        stepsBundle.putInt("Step", currentStep);
-        stepsBundle.putParcelableArrayList("Steps", steps);
+        stepsBundle.putInt(getResources().getString(R.string.step_key), currentStep);
+        stepsBundle.putParcelableArrayList(getResources().getString(R.string.steps_key), steps);
         StepDetailFragment newStepDetailFragment = new StepDetailFragment();
         newStepDetailFragment.setArguments(stepsBundle);
 
@@ -237,8 +237,8 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
     @Override
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("recipe", selectedRecipe);
-        outState.putInt("currentStep", currentStep);
+        outState.putParcelable(getResources().getString(R.string.recipe_key), selectedRecipe);
+        outState.putInt(getResources().getString(R.string.step_key), currentStep);
     }
 
 }
