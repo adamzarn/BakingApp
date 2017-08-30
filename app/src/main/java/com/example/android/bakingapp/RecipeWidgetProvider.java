@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
-import com.example.android.bakingapp.activities.MainActivity;
+import com.example.android.bakingapp.activities.RecipeActivity;
 
 /**
  * Implementation of App Widget functionality.
@@ -21,7 +21,7 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_provider);
 
-        Intent intent = new Intent(context, MainActivity.class);
+        Intent intent = new Intent(context, RecipeActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         views.setOnClickPendingIntent(R.id.widget_cupcake_image, pendingIntent);
