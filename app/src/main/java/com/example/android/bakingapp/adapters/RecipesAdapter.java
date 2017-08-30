@@ -42,7 +42,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
     @Override
     public void onBindViewHolder(final RecipesAdapter.ViewHolder viewHolder, int i) {
         viewHolder.recipeTitle.setText(myRecipes[i].getName());
-        String servingsText = context.getResources().getString(R.string.serves) + myRecipes[i].getServings();
+        String servingsText = context.getResources().getString(R.string.serves) + " " + myRecipes[i].getServings();
         viewHolder.servings.setText(servingsText);
         String url = myRecipes[i].getImage();
 

@@ -157,7 +157,7 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putString(getResources().getString(R.string.widget_recipe_key), recipe);
                 editor.apply();
-                Toast toast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_message) + recipe, Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getApplicationContext(), getResources().getString(R.string.toast_message) + " " + recipe, Toast.LENGTH_LONG);
                 TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
                 if (v != null) v.setGravity(Gravity.CENTER);
                 toast.show();

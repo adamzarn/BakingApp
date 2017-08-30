@@ -103,7 +103,7 @@ public class StepDetailFragment extends Fragment {
         try {
             mCallback = (OnButtonClickListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + getActivity().getResources().getString(R.string.on_button_exception));
+            throw new ClassCastException(context.toString() + " " + getActivity().getResources().getString(R.string.on_button_exception));
         }
     }
 
