@@ -40,7 +40,7 @@
     <string name="playback_position_key">playbackPosition</string>
 
     <string name="resource">DATA_LOADER</string>
-    <string name="toast_message">This app\'s widget will now display the recipe for</string>
+    <string name="toast_message">This app\'s widget will now display the ingredients for</string>
     <string name="serves">Serves</string>
     <string name="on_step_exception">must implement OnStepClickListener</string>
     <string name="on_button_exception">must implement OnButtonClickListener</string>

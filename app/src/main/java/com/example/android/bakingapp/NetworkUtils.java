@@ -1,5 +1,10 @@
 package com.example.android.bakingapp;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.android.bakingapp.activities.RecipeActivity;
 import com.example.android.bakingapp.objects.Ingredient;
 import com.example.android.bakingapp.objects.Recipe;
 import com.example.android.bakingapp.objects.Step;
@@ -106,6 +111,47 @@ public class NetworkUtils {
             i = i + 1;
         };
         return steps;
+    }
+
+    public static void getFavoriteRecipeData(final String recipe, final RecipeActivity.VolleyCallback callback) {
+        String url = getContext().getResources().getString(R.string.baking_data_url);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                JSONArray jsonArray = NetworkUtils.getJsonArray(response);
+                JSONObject[] jsonObjectArray = NetworkUtils.getJsonObjectArray(jsonArray);
+                Recipe[] recipes = NetworkUtils.convertToRecipes(jsonObjectArray);
+                if (recipe.equals("")) {
+                    callback.onSuccess(recipes[0]);
+                } else {
+                    for (Recipe currentRecipe : recipes) {
+                        if (currentRecipe.getName().equals(recipe)) {
+                            callback.onSuccess(currentRecipe);
+                        }
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        BakingApplication.getInstance().addToRequestQueue(stringRequest);
+    }
+
+    public static String getIngredientsString(Ingredient[] ingredients) {
+        String ingredientsText = "";
+        int i = 0;
+        for (Ingredient ingredient : ingredients) {
+            ingredientsText = ingredientsText + ingredient.getQuantity() + " " + ingredient.getMeasure() + " " + ingredient.getItem();
+            if (i != ingredients.length - 1) {
+                ingredientsText = ingredientsText + "\n";
+            }
+            i = i + 1;
+        }
+        return ingredientsText;
     }
 
 }

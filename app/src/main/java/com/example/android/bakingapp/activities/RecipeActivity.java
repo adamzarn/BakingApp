@@ -1,5 +1,7 @@
 package com.example.android.bakingapp.activities;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,21 +17,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.example.android.bakingapp.BakingApplication;
 import com.example.android.bakingapp.DeviceUtils;
 import com.example.android.bakingapp.NetworkUtils;
 import com.example.android.bakingapp.R;
+import com.example.android.bakingapp.RecipeWidgetProvider;
 import com.example.android.bakingapp.fragments.IngredientsAndStepsFragment;
 import com.example.android.bakingapp.fragments.StepDetailFragment;
 import com.example.android.bakingapp.objects.Recipe;
 import com.example.android.bakingapp.objects.Step;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,39 +61,21 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
             SharedPreferences preferences = getApplicationContext().getSharedPreferences(getString(R.string.my_preferences), Context.MODE_PRIVATE);
             recipe = preferences.getString(getResources().getString(R.string.widget_recipe_key), "");
 
-            String url = getApplicationContext().getResources().getString(R.string.baking_data_url);
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            NetworkUtils.getFavoriteRecipeData(recipe, new VolleyCallback() {
                 @Override
-                public void onResponse(String response) {
-                    JSONArray jsonArray = NetworkUtils.getJsonArray(response);
-                    JSONObject[] jsonObjectArray = NetworkUtils.getJsonObjectArray(jsonArray);
-                    Recipe[] recipes = NetworkUtils.convertToRecipes(jsonObjectArray);
-                    if (recipe.equals("")) {
-                        selectedRecipe = recipes[0];
-                    } else {
-                        for (Recipe currentRecipe : recipes) {
-                            if (currentRecipe.getName().equals(recipe)) {
-                                selectedRecipe = currentRecipe;
-                            }
-                        }
-                    }
-                    recipe = selectedRecipe.getName();
-                    setUpView(recipe);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    error.printStackTrace();
+                public void onSuccess(Recipe favoriteRecipe) {
+                    selectedRecipe = favoriteRecipe;
+                    setUpView(favoriteRecipe.getName());
                 }
             });
 
-            BakingApplication.getInstance().addToRequestQueue(stringRequest);
-
         } else {
-
             setUpView(recipe);
-
         }
+    }
+
+    public interface VolleyCallback {
+        void onSuccess(Recipe favoriteRecipe);
     }
 
     public void setUpView(String recipe) {
@@ -161,9 +138,18 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
                 TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
                 if (v != null) v.setGravity(Gravity.CENTER);
                 toast.show();
+                updateWidget();
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void updateWidget() {
+        Intent intent = new Intent(this, RecipeWidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), RecipeWidgetProvider.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(intent);
     }
 
     @Override

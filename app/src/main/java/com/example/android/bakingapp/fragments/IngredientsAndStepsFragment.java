@@ -12,9 +12,9 @@ import android.view.ViewTreeObserver;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.NetworkUtils;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.adapters.StepsAdapter;
-import com.example.android.bakingapp.objects.Ingredient;
 import com.example.android.bakingapp.objects.Recipe;
 import com.example.android.bakingapp.objects.Step;
 
@@ -79,19 +79,7 @@ public class IngredientsAndStepsFragment extends Fragment {
 
         ingredientsHeader.setText(getResources().getString(R.string.ingredients_header));
         stepsHeader.setText(getResources().getString(R.string.steps_header));
-
-        String ingredientsText = "";
-        Ingredient[] ingredientsList = selectedRecipe.getIngredients();
-
-        int i = 0;
-        for (Ingredient ingredient : ingredientsList) {
-            ingredientsText = ingredientsText + ingredient.getQuantity() + " " + ingredient.getMeasure() + " " + ingredient.getItem();
-            if (i != ingredientsList.length - 1) {
-                ingredientsText = ingredientsText + "\n";
-            }
-            i = i + 1;
-        }
-        ingredientsTextView.setText(ingredientsText);
+        ingredientsTextView.setText(NetworkUtils.getIngredientsString(selectedRecipe.getIngredients()));
 
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         StepsAdapter stepsAdapter = new StepsAdapter();
