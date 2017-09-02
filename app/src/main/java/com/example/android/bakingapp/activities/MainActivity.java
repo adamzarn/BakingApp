@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
                 public void onErrorResponse(VolleyError error) {
                     mIdlingResource.decrement();
                     progressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(context, "Could not get recipes.", Toast.LENGTH_LONG);
                     error.printStackTrace();
                 }
             });

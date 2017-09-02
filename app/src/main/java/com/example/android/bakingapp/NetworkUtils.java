@@ -1,6 +1,7 @@
 package com.example.android.bakingapp;
 
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -137,6 +138,7 @@ public class NetworkUtils {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                Toast.makeText(getContext(), "Could not load favorite recipe.", Toast.LENGTH_LONG);
             }
         });
 
