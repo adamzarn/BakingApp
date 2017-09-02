@@ -2,6 +2,8 @@ package com.example.android.bakingapp.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -66,7 +68,7 @@ public class IngredientsAndStepsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.ingredients_and_steps_fragment, container, false);
         ButterKnife.bind(this, rootView);
@@ -82,6 +84,12 @@ public class IngredientsAndStepsFragment extends Fragment {
         ingredientsTextView.setText(NetworkUtils.getIngredientsString(selectedRecipe.getIngredients()));
 
         stepsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        if (savedInstanceState != null) {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable("recycler_layout");
+            stepsRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        }
+
         StepsAdapter stepsAdapter = new StepsAdapter();
         stepsRecyclerView.setAdapter(stepsAdapter);
 
@@ -106,9 +114,19 @@ public class IngredientsAndStepsFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(getActivity().getResources().getString(R.string.recipe_key), selectedRecipe);
+        outState.putParcelable("recycler_layout", stepsRecyclerView.getLayoutManager().onSaveInstanceState());
+        outState.putIntArray("scroll_view_position",
+                new int[]{scrollView.getScrollX(), scrollView.getScrollY()});
     }
+
 }
 

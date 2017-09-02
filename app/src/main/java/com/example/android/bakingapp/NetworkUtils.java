@@ -1,5 +1,7 @@
 package com.example.android.bakingapp;
 
+import android.text.TextUtils;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -121,7 +123,7 @@ public class NetworkUtils {
                 JSONArray jsonArray = NetworkUtils.getJsonArray(response);
                 JSONObject[] jsonObjectArray = NetworkUtils.getJsonObjectArray(jsonArray);
                 Recipe[] recipes = NetworkUtils.convertToRecipes(jsonObjectArray);
-                if (recipe.equals("")) {
+                if (TextUtils.isEmpty(recipe)) {
                     callback.onSuccess(recipes[0]);
                 } else {
                     for (Recipe currentRecipe : recipes) {

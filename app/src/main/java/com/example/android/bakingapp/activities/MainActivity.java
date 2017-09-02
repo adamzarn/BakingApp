@@ -3,6 +3,8 @@ package com.example.android.bakingapp.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.idling.CountingIdlingResource;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +14,14 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.android.bakingapp.BakingApplication;
+import com.example.android.bakingapp.ConnectivityReceiver;
 import com.example.android.bakingapp.DeviceUtils;
 import com.example.android.bakingapp.NetworkUtils;
 import com.example.android.bakingapp.R;
@@ -32,7 +36,7 @@ import butterknife.ButterKnife;
 
 import static com.example.android.bakingapp.BakingApplication.getContext;
 
-public class MainActivity extends AppCompatActivity implements RecipesAdapter.RecipesAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity implements RecipesAdapter.RecipesAdapterOnClickHandler, ConnectivityReceiver.ConnectivityReceiverListener {
 
     @BindView(R.id.recipes_recycler_view)
     RecyclerView recipesRecyclerView;
@@ -72,35 +76,52 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
             recipesRecyclerView.setLayoutManager(landLayoutManager);
         }
 
+        if (savedInstanceState != null) {
+            Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable("recycler_layout");
+            recipesRecyclerView.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+        }
+
         recipesAdapter = new RecipesAdapter(this);
         recipesRecyclerView.setAdapter(recipesAdapter);
 
+        getRecipes(isConnected());
+
+    }
+
+    private void getRecipes(boolean isConnected) {
         mIdlingResource.increment();
         progressBar.setVisibility(View.VISIBLE);
-        String url = getApplicationContext().getResources().getString(R.string.baking_data_url);
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        if (isConnected) {
+            String url = getApplicationContext().getResources().getString(R.string.baking_data_url);
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
 
-            @Override
-            public void onResponse(String response) {
-
-                JSONArray jsonArray = NetworkUtils.getJsonArray(response);
-                JSONObject[] jsonObjectArray = NetworkUtils.getJsonObjectArray(jsonArray);
-                Recipe[] recipes = NetworkUtils.convertToRecipes(jsonObjectArray);
-                recipesAdapter.setData(recipes);
-                mIdlingResource.decrement();
-                progressBar.setVisibility(View.INVISIBLE);
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressBar.setVisibility(View.INVISIBLE);
-                error.printStackTrace();
-            }
-        });
-
-        BakingApplication.getInstance().addToRequestQueue(stringRequest);
-
+                @Override
+                public void onResponse(String response) {
+                    JSONArray jsonArray = NetworkUtils.getJsonArray(response);
+                    JSONObject[] jsonObjectArray = NetworkUtils.getJsonObjectArray(jsonArray);
+                    Recipe[] recipes = NetworkUtils.convertToRecipes(jsonObjectArray);
+                    recipesAdapter.setData(recipes);
+                    mIdlingResource.decrement();
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    mIdlingResource.decrement();
+                    progressBar.setVisibility(View.INVISIBLE);
+                    error.printStackTrace();
+                }
+            });
+            BakingApplication.getInstance().addToRequestQueue(stringRequest);
+        } else {
+            mIdlingResource.decrement();
+            progressBar.setVisibility(View.INVISIBLE);
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), "You are not connected to the internet. Please establish an internet connection.", Snackbar.LENGTH_INDEFINITE);
+            View sbView = snackbar.getView();
+            TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+            snackbar.show();
+        }
     }
 
     @Override
@@ -112,6 +133,33 @@ public class MainActivity extends AppCompatActivity implements RecipesAdapter.Re
         intent.putExtra(getResources().getString(R.string.recipe_key), selectedRecipe);
 
         startActivity(intent);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("recycler_layout", recipesRecyclerView.getLayoutManager().onSaveInstanceState());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BakingApplication.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        BakingApplication.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        getRecipes(isConnected);
+    }
+
+    private boolean isConnected() {
+        return ConnectivityReceiver.isConnected();
     }
 
 }

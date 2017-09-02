@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.bakingapp.ConnectivityReceiver;
 import com.example.android.bakingapp.DeviceUtils;
 import com.example.android.bakingapp.NetworkUtils;
 import com.example.android.bakingapp.R;
@@ -29,7 +31,7 @@ import com.example.android.bakingapp.objects.Step;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class RecipeActivity extends AppCompatActivity implements IngredientsAndStepsFragment.OnStepClickListener, StepDetailFragment.OnButtonClickListener {
+public class RecipeActivity extends AppCompatActivity implements IngredientsAndStepsFragment.OnStepClickListener, StepDetailFragment.OnButtonClickListener, ConnectivityReceiver.ConnectivityReceiverListener {
 
     private boolean mTwoPane;
     private String recipe;
@@ -61,17 +63,33 @@ public class RecipeActivity extends AppCompatActivity implements IngredientsAndS
             SharedPreferences preferences = getApplicationContext().getSharedPreferences(getString(R.string.my_preferences), Context.MODE_PRIVATE);
             recipe = preferences.getString(getResources().getString(R.string.widget_recipe_key), "");
 
-            NetworkUtils.getFavoriteRecipeData(recipe, new VolleyCallback() {
-                @Override
-                public void onSuccess(Recipe favoriteRecipe) {
-                    selectedRecipe = favoriteRecipe;
-                    setUpView(favoriteRecipe.getName());
-                }
-            });
+            if (isConnected()) {
+                NetworkUtils.getFavoriteRecipeData(recipe, new VolleyCallback() {
+                    @Override
+                    public void onSuccess(Recipe favoriteRecipe) {
+                        selectedRecipe = favoriteRecipe;
+                        setUpView(favoriteRecipe.getName());
+                    }
+                });
+            } else {
+                Snackbar snackbar = Snackbar
+                        .make(findViewById(android.R.id.content), "You are not connected to the internet. Please establish an internet connection.", Snackbar.LENGTH_INDEFINITE);
+                View sbView = snackbar.getView();
+                TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+                snackbar.show();
+            }
 
         } else {
             setUpView(recipe);
         }
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+    }
+
+    private boolean isConnected() {
+        return ConnectivityReceiver.isConnected();
     }
 
     public interface VolleyCallback {

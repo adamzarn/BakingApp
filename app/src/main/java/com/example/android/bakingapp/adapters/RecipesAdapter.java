@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.android.volley.toolbox.ImageRequest;
 import com.example.android.bakingapp.BakingApplication;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.objects.Recipe;
+
+import static com.example.android.bakingapp.ConnectivityReceiver.isConnected;
 
 /**
  * Created by adamzarn on 8/15/17.
@@ -46,20 +49,22 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.ViewHold
         viewHolder.servings.setText(servingsText);
         String url = myRecipes[i].getImage();
 
-        if (!url.equals("")) {
-            ImageRequest imageRequest = new ImageRequest(url, new Response.Listener<Bitmap>() {
-                @Override
-                public void onResponse(Bitmap response) {
-                    viewHolder.imageView.setImageBitmap(response);
-                }
-            }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    error.printStackTrace();
-                    viewHolder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cupcake));
-                }
-            });
-            BakingApplication.getInstance().addToRequestQueue(imageRequest);
+        if (!TextUtils.isEmpty(url)) {
+            if (isConnected()) {
+                ImageRequest imageRequest = new ImageRequest(url, new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        viewHolder.imageView.setImageBitmap(response);
+                    }
+                }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        viewHolder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cupcake));
+                    }
+                });
+                BakingApplication.getInstance().addToRequestQueue(imageRequest);
+            }
         } else {
             viewHolder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.cupcake));
         }

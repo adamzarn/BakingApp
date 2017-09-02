@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 import static android.view.View.VISIBLE;
+import static com.example.android.bakingapp.ConnectivityReceiver.isConnected;
 
 /**
  * Created by adamzarn on 8/18/17.
@@ -55,7 +57,7 @@ public class StepDetailFragment extends Fragment {
     @BindView(R.id.thumbnail_view)
     ImageView thumbnailView;
 
-    @BindView(R.id.video_view)
+    @BindView(R.id.simple_video_view)
     SimpleExoPlayerView playerView;
 
     @BindView(R.id.no_media_available)
@@ -138,34 +140,39 @@ public class StepDetailFragment extends Fragment {
 
         noMediaAvailableTextView.setVisibility(View.VISIBLE);
         thumbnailView.setVisibility(View.VISIBLE);
-        if (currentVideoURL.equals("")) {
-            if (currentThumbnailURL.equals("")) {
+        if (TextUtils.isEmpty(currentVideoURL)) {
+            if (TextUtils.isEmpty(currentThumbnailURL)) {
                 thumbnailView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.no_media_available));
                 noMediaAvailableTextView.setVisibility(View.GONE);
             } else {
-                ImageRequest imageRequest = new ImageRequest(currentThumbnailURL, new Response.Listener<Bitmap>() {
-                    @Override
-                    public void onResponse(Bitmap response) {
-                        try {
-                            thumbnailView.setImageBitmap(response);
-                            noMediaAvailableTextView.setVisibility(View.GONE);
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
+                if (isConnected()) {
+                    ImageRequest imageRequest = new ImageRequest(currentThumbnailURL, new Response.Listener<Bitmap>() {
+                        @Override
+                        public void onResponse(Bitmap response) {
+                            try {
+                                thumbnailView.setImageBitmap(response);
+                                noMediaAvailableTextView.setVisibility(View.GONE);
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        try {
-                            thumbnailView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.no_media_available));
-                            noMediaAvailableTextView.setVisibility(View.GONE);
-                        } catch (NullPointerException e) {
-                            e.printStackTrace();
+                    }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                            try {
+                                thumbnailView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.no_media_available));
+                                noMediaAvailableTextView.setVisibility(View.GONE);
+                            } catch (NullPointerException e) {
+                                e.printStackTrace();
+                            }
                         }
-                    }
-                });
-                BakingApplication.getInstance().addToRequestQueue(imageRequest);
+                    });
+                    BakingApplication.getInstance().addToRequestQueue(imageRequest);
+                } else {
+                    thumbnailView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.no_media_available));
+                    noMediaAvailableTextView.setVisibility(View.GONE);
+                }
             }
         } else {
             noMediaAvailableTextView.setVisibility(View.GONE);
@@ -228,7 +235,7 @@ public class StepDetailFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            if (currentVideoURL.equals("")) {
+            if (TextUtils.isEmpty(currentVideoURL)) {
                 playerView.setVisibility(View.GONE);
                 releasePlayer();
             } else {
@@ -242,7 +249,7 @@ public class StepDetailFragment extends Fragment {
         super.onResume();
         hideSystemUi();
         if ((Util.SDK_INT <= 23 || player == null)) {
-            if (currentVideoURL.equals("")) {
+            if (TextUtils.isEmpty(currentVideoURL)) {
                 playerView.setVisibility(View.GONE);
                 releasePlayer();
             } else {
