@@ -158,4 +158,8 @@ public class NetworkUtils {
         return ingredientsText;
     }
 
+    public static String getIngredientString(Ingredient ingredient) {
+        return ingredient.getQuantity() + " " + ingredient.getMeasure() + " " + ingredient.getItem();
+    }
+
 }
